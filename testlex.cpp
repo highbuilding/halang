@@ -1,4 +1,5 @@
 #define CATCH_CONFIG_MAIN
+
 #include <iostream>
 #include <utility>
 #include <memory>
@@ -10,58 +11,58 @@
 
 using namespace halang;
 
-TEST_CASE( "StringBuffer", "[StringBuffer]" ) {
+TEST_CASE("StringBuffer", "[StringBuffer]") {
 
     StringBuffer sb;
 
     sb.AddBuffer(
-        std::make_shared<std::string>("abc")
+            std::make_shared<std::string>("abc")
     );
     sb.AddBuffer(
-        std::make_shared<std::string>("def")
+            std::make_shared<std::string>("def")
     );
 
     U16String merged(u"abcdef");
 
     for (int i = 0; i < merged.size(); i++) {
-        REQUIRE( sb.NextChar() == merged[i] );
+        REQUIRE(sb.NextChar() == merged[i]);
     }
 
-    REQUIRE( sb.GetChar() == 0x00 );
+    REQUIRE(sb.GetChar() == 0x00);
 }
 
-TEST_CASE( "StringBuffer GobackChar()", "[StringBuffer]" ) {
+TEST_CASE("StringBuffer GobackChar()", "[StringBuffer]") {
 
     StringBuffer sb;
 
     sb.AddBuffer(
-        std::make_shared<std::string>("abc")
+            std::make_shared<std::string>("abc")
     );
     sb.AddBuffer(
-        std::make_shared<std::string>("def")
+            std::make_shared<std::string>("def")
     );
 
     for (int i = 0; i < 4; i++) {
         sb.NextChar();
     }
 
-    REQUIRE( sb.GetChar() == u'e' );
+    REQUIRE(sb.GetChar() == u'e');
 
     sb.GoBackChar();
-    REQUIRE( sb.GetChar() == u'd' );
+    REQUIRE(sb.GetChar() == u'd');
 
     sb.GoBackChar();
-    REQUIRE( sb.GetChar() == u'c' );
+    REQUIRE(sb.GetChar() == u'c');
 
     U16String merged(u"cdef");
 
     for (int i = 0; i < merged.size(); i++) {
-        REQUIRE( sb.NextChar() == merged[i] );
+        REQUIRE(sb.NextChar() == merged[i]);
     }
 
 }
 
-TEST_CASE( "Lexer1", "[Lexer]" ) {
+TEST_CASE("Lexer1", "[Lexer]") {
 
     for (int i = 0; i < Token::TYPE::TOKEN_NUMBER; i++) {
         std::cout << i << ": " << TokenName[i] << std::endl;
@@ -69,16 +70,16 @@ TEST_CASE( "Lexer1", "[Lexer]" ) {
 
     Lexer lexer;
 
-    const char* codes[3] = {
-        "fun a, b -> do\n",
-        "   foo();\n"
-        "   a + b * 1\n",
-        "end"
+    const char *codes[3] = {
+            "fun a, b -> do\n",
+            "   foo();\n"
+            "   a + b * 1\n",
+            "end"
     };
 
     for (int i = 0; i < 3; i++) {
         lexer.AddBuffer(
-            std::make_shared<std::string>(codes[i])
+                std::make_shared<std::string>(codes[i])
         );
     }
 
@@ -102,26 +103,26 @@ TEST_CASE( "Lexer1", "[Lexer]" ) {
 
     lexer.NextToken();
     for (auto i = token_list.begin();
-    i != token_list.end(); i++) {
+         i != token_list.end(); i++) {
         auto tok = lexer.NextToken();
-        REQUIRE( tok->type == *i );
+        REQUIRE(tok->type == *i);
     }
 
-    REQUIRE( lexer.NextToken()->type == Token::TYPE::ENDFILE );
+    REQUIRE(lexer.NextToken()->type == Token::TYPE::ENDFILE);
 
 }
 
-TEST_CASE( "Lexer2", "[Lexer]" ) {
+TEST_CASE("Lexer2", "[Lexer]") {
 
     Lexer lexer;
 
-    const char* codes[1] = {
-        "foo(\"hello\")\n",
+    const char *codes[1] = {
+            "foo(\"hello\")\n",
     };
 
     for (int i = 0; i < 1; i++) {
         lexer.AddBuffer(
-            std::make_shared<std::string>(codes[i])
+                std::make_shared<std::string>(codes[i])
         );
     }
 
@@ -133,11 +134,11 @@ TEST_CASE( "Lexer2", "[Lexer]" ) {
 
     lexer.NextToken();
     for (auto i = token_list.begin();
-    i != token_list.end(); i++) {
+         i != token_list.end(); i++) {
         auto tok = lexer.NextToken();
-        REQUIRE( tok->type == *i );
+        REQUIRE(tok->type == *i);
     }
 
-    REQUIRE( lexer.NextToken()->type == Token::TYPE::ENDFILE );
+    REQUIRE(lexer.NextToken()->type == Token::TYPE::ENDFILE);
 
 }

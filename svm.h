@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <vector>
 #include <cinttypes>
@@ -10,61 +11,62 @@
 
 #define PRE(POINTER) ((POINTER) - 1)
 
-namespace halang
-{
-	class CodePack;
+namespace halang {
+    class CodePack;
 
-	typedef Instruction* InstIter;
+    typedef Instruction *InstIter;
 
-	class StackVM final
-	{
-	public:
+    final class StackVM  {
+    public:
 
-		friend class GC;
+        friend class GC;
 
-		class Executor;
+        class Executor;
 
-		StackVM();
+        StackVM();
 
-		StackVM(const StackVM&) = delete;
-		StackVM& operator=(const StackVM&) = delete;
+        StackVM(const StackVM &) = delete;
 
-		void InitializeFunction(Function * );
+        StackVM &operator=(const StackVM &) = delete;
+
+        void InitializeFunction(Function *);
 
 
-		Value CallFunction(Function* function, Value self, FunctionArgs * args = nullptr);
+        Value CallFunction(Function *function, Value self, FunctionArgs *args = nullptr);
 
-		~StackVM();
+        ~StackVM();
 
-	private:
+    private:
 
-		InstIter inst;
-		Value* ptr;
+        InstIter inst;
+        Value *ptr;
 
-		GC gc;
+        GC gc;
 
-	};
+    };
 
-	class StackVM::Executor 
-	{
-	public:
+    class StackVM::Executor {
+    public:
 
-		Executor(Value _self, Function *, FunctionArgs * args = nullptr);
+        Executor(Value _self, Function *, FunctionArgs *args = nullptr);
 
-		void LoadArguments(FunctionArgs *);
-		void Execute();
-		Value ReturnValue();
-		~Executor();
+        void LoadArguments(FunctionArgs *);
 
-	private:
+        void Execute();
 
-		Value self;
-		ScriptContext* sc;
-		Function* fun;
-		FunctionArgs * args;
-		InstIter inst;
-		Value returnValue;
+        Value ReturnValue();
 
-	};
+        ~Executor();
+
+    private:
+
+        Value self;
+        ScriptContext *sc;
+        Function *fun;
+        FunctionArgs *args;
+        InstIter inst;
+        Value returnValue;
+
+    };
 
 }

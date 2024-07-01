@@ -1,66 +1,70 @@
 #pragma once
+
 #include "halang.h"
 #include "object.h"
 #include "string.h"
 #include <utility>
 #include <unordered_map>
 
-namespace halang
-{
-	class Dict : 
-		public GCObject
-	{
-	public:
+namespace halang {
+    class Dict :
+            public GCObject {
+    public:
 
-		friend class GC;
-		friend class StackVM;
-		typedef unsigned int size_type;
+        friend class GC;
 
-		static const size_type DEFAULT_ENTRY_SIZE = 64;
+        friend class StackVM;
 
-	protected:
+        typedef unsigned int size_type;
 
-		Dict();
-		// Dict(const Dict&);
+        static const size_type DEFAULT_ENTRY_SIZE = 64;
 
-		struct Entry;
+    protected:
 
-		Entry ** entries;
-		size_type _size;
+        Dict();
+        // Dict(const Dict&);
 
-	public:
+        struct Entry;
 
-		Value toValue() override;
+        Entry **entries;
+        size_type _size;
 
-		bool TryGetValue(Value key, Value &value);
-		bool TryEmplace(Value key, Value value);
-		bool TryRemove(Value key);
-		bool Exist(Value key);
+    public:
 
-		void Insert(Value key, Value value);
-		Value GetValue(Value key);
-		void SetValue(Value key, Value value);
-		virtual void Mark() override;
+        Value toValue() override;
 
-		virtual ~Dict() override;
+        bool TryGetValue(Value key, Value &value);
 
-	};
+        bool TryEmplace(Value key, Value value);
 
-	struct Dict::Entry
-	{
-	public:
+        bool TryRemove(Value key);
 
-		Entry() : next(nullptr)
-		{}
+        bool Exist(Value key);
 
-		Entry(unsigned int _hash, Value _key, Value _value, Entry * _next = nullptr):
-			hash(_hash), key(_key), value(_value), next(_next)
-		{}
+        void Insert(Value key, Value value);
 
-		unsigned int hash;
-		Value key;
-		Value value;
-		Entry * next;
-	};
+        Value GetValue(Value key);
+
+        void SetValue(Value key, Value value);
+
+        virtual void Mark() override;
+
+        virtual ~Dict() override;
+
+    };
+
+    struct Dict::Entry {
+    public:
+
+        Entry() : next(nullptr) {}
+
+        Entry(unsigned int _hash, Value _key, Value _value, Entry *_next = nullptr) :
+                hash(_hash), key(_key), value(_value), next(_next) {}
+
+        unsigned int hash;
+        Value key;
+        Value value;
+        Entry *next;
+    };
 
 }

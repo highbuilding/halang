@@ -1,156 +1,172 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include <utility>
 #include "halang.h"
 
-namespace halang
-{
-	/*
-	Value:
-		- null
-		- bool
-		- small int
-		- double
+namespace halang {
+    /*
+    Value:
+        - null
+        - bool
+        - small int
+        - double
 
-		- GC Object
-			- UpValue
-			- String
-			- Array
-			- CodePack
-			- Function
-			- Dict // an hash map
-				- General Object
-					- Class				// to generate general object
-					- StringBuilder
+        - GC Object
+            - UpValue
+            - String
+            - Array
+            - CodePack
+            - Function
+            - Dict // an hash map
+                - General Object
+                    - Class				// to generate general object
+                    - StringBuilder
 
-	*/
+    */
 
-	class Object;
-	class String;
-	class ConsString;
-	class SliceString;
-	class Array;
-	class Dict;
-	class Function;
+    class Object;
 
-	struct Value;
+    class String;
 
-	class GCObject
-	{
-	public:
+    class ConsString;
 
-		friend class GC;
-		friend class Context;
-		friend class ScriptContextPool;
+    class SliceString;
 
-		virtual Dict* GetPrototype() { return nullptr; }
-		virtual Value toValue();
-		virtual void Mark() {}
-		virtual ~GCObject() {}
+    class Array;
 
-	protected:
+    class Dict;
 
-		GCObject():
-			next(nullptr), marked(false), persistent(false)
-		{}
+    class Function;
 
-		GCObject* next;
-		bool marked : 2;
-		bool persistent : 2;
+    struct Value;
 
-	};
+    class GCObject {
+    public:
 
-	enum class TypeId {
-		Null,
-		Bool,
-		SmallInt,
-		Number,
-		GCObject,
-		ScriptContext,
-		CodePack,
-		Function,
-		UpValue,
-		String,
-		Array,
-		Dict,
-	};
+        friend class GC;
 
-	struct Value 
-	{
-	public:
+        friend class Context;
 
-		union
-		{
-			GCObject* gc;
-			TSmallInt si;		// small int
-			TNumber number;
-			TBool bl;
-		} value;
-		TypeId type;
+        friend class ScriptContextPool;
 
-		Dict* GetPrototype();
+        virtual Dict *GetPrototype() { return nullptr; }
 
-		explicit Value() : type(TypeId::Null) {
-			value.gc = nullptr;
-		}
+        virtual Value toValue();
 
-		explicit Value(TSmallInt i) : type(TypeId::SmallInt) {
-			value.si = i;
-		}
+        virtual void Mark() {}
 
-		explicit Value(TNumber n) : type(TypeId::Number) {
-			value.number = n;
-		}
+        virtual ~GCObject() {}
 
-		explicit Value(bool n) : type(TypeId::Bool) {
-			value.bl = n;
-		}
+    protected:
 
-		explicit Value(GCObject* gc, TypeId t) : type(t) {
-			value.gc = gc;
-		}
+        GCObject() :
+                next(nullptr), marked(false), persistent(false) {}
 
-		inline bool isNull() const { return type == TypeId::Null; }
-		inline bool isBool() const { return type == TypeId::Bool; }
-		inline bool isSmallInt() const { return type == TypeId::SmallInt; }
-		inline bool isNumber() const { return type == TypeId::Number; }
-		inline bool isGCObject() const { return type >= TypeId::GCObject; }
-		inline bool isString() const { return type == TypeId::String; }
-		inline bool isScriptContext() const { return type == TypeId::ScriptContext; }
-		inline bool isCodePack() const { return type == TypeId::CodePack; }
-		inline bool isFunction() const { return type == TypeId::Function; }
-		inline bool isUpValue() const { return type == TypeId::UpValue; }
-		inline bool isArray() const { return type == TypeId::Array; }
-		inline bool isDict() const { return type == TypeId::Dict; }
+        GCObject *next;
+        bool marked: 2;
+        bool persistent: 2;
 
-		inline operator bool() const
-		{
-			switch (type)
-			{
-			case halang::TypeId::Null:
-				return false;
-			case halang::TypeId::Bool:
-				return value.bl;
-			case halang::TypeId::SmallInt:
-				return value.si == 0;
-			case halang::TypeId::Number:
-				return value.number == 0;
-			case halang::TypeId::GCObject:
-			case halang::TypeId::ScriptContext:
-			case halang::TypeId::CodePack:
-			case halang::TypeId::Function:
-			case halang::TypeId::UpValue:
-			case halang::TypeId::String:
-			case halang::TypeId::Array:
-			case halang::TypeId::Dict:
-			default:
-				return false;
-			}
-		}
+    };
 
-		bool operator==(const Value& that) const;
+    enum class TypeId {
+        Null,
+        Bool,
+        SmallInt,
+        Number,
+        GCObject,
+        ScriptContext,
+        CodePack,
+        Function,
+        UpValue,
+        String,
+        Array,
+        Dict,
+    };
 
-	};
+    struct Value {
+    public:
+
+        union {
+            GCObject *gc;
+            TSmallInt si;        // small int
+            TNumber number;
+            TBool bl;
+        } value;
+        TypeId type;
+
+        Dict *GetPrototype();
+
+        explicit Value() : type(TypeId::Null) {
+            value.gc = nullptr;
+        }
+
+        explicit Value(TSmallInt i) : type(TypeId::SmallInt) {
+            value.si = i;
+        }
+
+        explicit Value(TNumber n) : type(TypeId::Number) {
+            value.number = n;
+        }
+
+        explicit Value(bool n) : type(TypeId::Bool) {
+            value.bl = n;
+        }
+
+        explicit Value(GCObject *gc, TypeId t) : type(t) {
+            value.gc = gc;
+        }
+
+        inline bool isNull() const { return type == TypeId::Null; }
+
+        inline bool isBool() const { return type == TypeId::Bool; }
+
+        inline bool isSmallInt() const { return type == TypeId::SmallInt; }
+
+        inline bool isNumber() const { return type == TypeId::Number; }
+
+        inline bool isGCObject() const { return type >= TypeId::GCObject; }
+
+        inline bool isString() const { return type == TypeId::String; }
+
+        inline bool isScriptContext() const { return type == TypeId::ScriptContext; }
+
+        inline bool isCodePack() const { return type == TypeId::CodePack; }
+
+        inline bool isFunction() const { return type == TypeId::Function; }
+
+        inline bool isUpValue() const { return type == TypeId::UpValue; }
+
+        inline bool isArray() const { return type == TypeId::Array; }
+
+        inline bool isDict() const { return type == TypeId::Dict; }
+
+        inline operator bool() const {
+            switch (type) {
+                case halang::TypeId::Null:
+                    return false;
+                case halang::TypeId::Bool:
+                    return value.bl;
+                case halang::TypeId::SmallInt:
+                    return value.si == 0;
+                case halang::TypeId::Number:
+                    return value.number == 0;
+                case halang::TypeId::GCObject:
+                case halang::TypeId::ScriptContext:
+                case halang::TypeId::CodePack:
+                case halang::TypeId::Function:
+                case halang::TypeId::UpValue:
+                case halang::TypeId::String:
+                case halang::TypeId::Array:
+                case halang::TypeId::Dict:
+                default:
+                    return false;
+            }
+        }
+
+        bool operator==(const Value &that) const;
+
+    };
 
 }

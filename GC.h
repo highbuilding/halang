@@ -1,59 +1,61 @@
 #pragma once
+
 #include <memory>
 #include "object.h"
 
 namespace halang {
 
-	class GC final
-	{
+    final class GC {
 
-	private:
+    private:
 
-		GCObject* objects;
+        GCObject *objects;
 
-	protected:
+    protected:
 
-		GC();
-		~GC();
+        GC();
 
-	public:
+        ~GC();
 
-		friend class StackVM;
+    public:
 
-		template<class _Ty, class... _Types> 
-		inline _Ty* New(_Types&&... _Args)
-		{	
-			_Ty* new_obj = new _Ty(std::forward<_Types>(_Args)...);
-			new_obj->next = objects;
-			objects = new_obj;
+        friend class StackVM;
 
-			counter++;
+        template<class _Ty, class... _Types>
+        inline _Ty *New(_Types &&... _Args) {
+            _Ty *new_obj = new _Ty(std::forward<_Types>(_Args)...);
+            new_obj->next = objects;
+            objects = new_obj;
 
-			return new_obj;
-		}
+            counter++;
 
-		template<class _Ty, class... _Types> 
-		inline _Ty* NewPersistent(_Types&&... _Args)
-		{	
-			_Ty* new_obj = new _Ty(std::forward<_Types>(_Args)...);
-			new_obj->next = objects;
-			new_obj->persistent = true;
-			objects = new_obj;
+            return new_obj;
+        }
 
-			return new_obj;
-		}
+        template<class _Ty, class... _Types>
+        inline _Ty *NewPersistent(_Types &&... _Args) {
+            _Ty *new_obj = new _Ty(std::forward<_Types>(_Args)...);
+            new_obj->next = objects;
+            new_obj->persistent = true;
+            objects = new_obj;
 
-		void CheckAndGC();
+            return new_obj;
+        }
 
-	private:
+        void CheckAndGC();
 
-		GCObject* Erase(GCObject* obj);
+    private:
 
-		unsigned int counter;
-		void FullGC();
-		void ClearAllMarks();
-		void SweepAll();
+        GCObject *Erase(GCObject *obj);
 
-	};
+        unsigned int counter;
+
+        void FullGC();
+
+        void ClearAllMarks();
+
+        void SweepAll();
+
+    };
 
 }

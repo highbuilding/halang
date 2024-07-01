@@ -4,76 +4,63 @@
 #include "Dict.h"
 #include <iostream>
 
-namespace halang
-{
+namespace halang {
 
-	GC::GC() :
-		objects(nullptr), counter(0)
-	{
-		Context::gc = this;
-	}
+    GC::GC() :
+            objects(nullptr), counter(0) {
+        Context::gc = this;
+    }
 
-	GCObject* GC::Erase(GCObject* obj)
-	{
-		GCObject* _next = obj->next;
-		delete obj;
-		return _next;
-	}
+    GCObject *GC::Erase(GCObject *obj) {
+        GCObject *_next = obj->next;
+        delete obj;
+        return _next;
+    }
 
-	void GC::ClearAllMarks()
-	{
-		// std::cout << "full gc" << std::endl;
-		auto ptr = objects;
-		while (ptr != nullptr)
-		{
-			ptr->marked = false;
-			ptr = ptr->next;
-		}
-	}
+    void GC::ClearAllMarks() {
+        // std::cout << "full gc" << std::endl;
+        auto ptr = objects;
+        while (ptr != nullptr) {
+            ptr->marked = false;
+            ptr = ptr->next;
+        }
+    }
 
-	void GC::SweepAll()
-	{
-		GCObject** ptr = &objects;
+    void GC::SweepAll() {
+        GCObject **ptr = &objects;
 
-		while (*ptr != nullptr)
-		{
-			if (!(*ptr)->marked && !(*ptr)->persistent)
-				*ptr = Erase(*ptr);
-			else
-				ptr = &((*ptr)->next);
-		}
-	}
+        while (*ptr != nullptr) {
+            if (!(*ptr)->marked && !(*ptr)->persistent)
+                *ptr = Erase(*ptr);
+            else
+                ptr = &((*ptr)->next);
+        }
+    }
 
-	void GC::FullGC()
-	{
+    void GC::FullGC() {
 #ifdef _DEBUG
-		// std::cout << "Full GC" << std::endl;
+        // std::cout << "Full GC" << std::endl;
 #endif
-		ClearAllMarks();
-		auto scs = Context::GetRunningContexts();
-		for (auto i = scs->begin(); i != scs->end(); ++i)
-		{
-			(*i)->Mark();
-		}
-		SweepAll();
-	}
+        ClearAllMarks();
+        auto scs = Context::GetRunningContexts();
+        for (auto i = scs->begin(); i != scs->end(); ++i) {
+            (*i)->Mark();
+        }
+        SweepAll();
+    }
 
-	void GC::CheckAndGC()
-	{
-		if (counter >= 128)
-		{
-			FullGC();
-			counter = 0;
-		}
-	}
+    void GC::CheckAndGC() {
+        if (counter >= 128) {
+            FullGC();
+            counter = 0;
+        }
+    }
 
-	GC::~GC()
-	{
-		// clear all objects
-		while (objects != nullptr)
-		{
-			objects = Erase(objects);
-		}
-	}
+    GC::~GC() {
+        // clear all objects
+        while (objects != nullptr) {
+            objects = Erase(objects);
+        }
+    }
 
 }

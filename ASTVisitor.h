@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <sstream>
 #include "halang.h"
@@ -10,12 +11,15 @@ namespace halang {
     class ASTVisitor : public Visitor {
     public:
 
-		virtual void Visit(Node*) override;
+        virtual void Visit(Node *) override;
+
 #define VISIT_METHOD(NAME) virtual void Visit(NAME##Node*) override;
-		NODE_LIST(VISIT_METHOD)
+
+        NODE_LIST(VISIT_METHOD)
+
 #undef VISIT_METHOD
 
-        ostream& Out() {
+        ostream &Out() {
             for (int i = 0; i < depth; i++) {
                 std::cout << "  ";
             }
@@ -24,7 +28,7 @@ namespace halang {
 
         inline std::string PrintOP(OperatorType op) {
             std::stringstream ss;
-            switch(op) {
+            switch (op) {
                 case OperatorType::ADD:
                     ss << "+";
                     break;

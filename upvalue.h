@@ -1,77 +1,68 @@
 #pragma once
+
 #include "object.h"
 
-namespace halang
-{
+namespace halang {
 
-	/// <summary>
-	/// UpValue is a magic class.
-	///
-	/// Before the upvalue is closed, upvalue store the pointer 
-	/// of the object.
-	/// After the upvalue is closed, upvalue construct a new
-	/// Object and own it.
-	/// </summary>
-	class UpValue : public GCObject
-	{
-	protected:
+    /// <summary>
+    /// UpValue is a magic class.
+    ///
+    /// Before the upvalue is closed, upvalue store the pointer
+    /// of the object.
+    /// After the upvalue is closed, upvalue construct a new
+    /// Object and own it.
+    /// </summary>
+    class UpValue : public GCObject {
+    protected:
 
-		UpValue(Value* _re = nullptr): 
-			value(_re), _closed(false)
-		{}
+        UpValue(Value *_re = nullptr) :
+                value(_re), _closed(false) {}
 
-	public:
+    public:
 
-		friend class GC;
-		friend class StackVM;
+        friend class GC;
 
-		virtual void Mark() override
-		{
-			if (!marked)
-			{
-				marked = true;
-				if (value->isGCObject())
-					value->value.gc->Mark();
-			}
-		}
+        friend class StackVM;
 
-		virtual ~UpValue() 
-		{
-			if (_closed)
-				delete value;
-		}
+        virtual void Mark() override {
+            if (!marked) {
+                marked = true;
+                if (value->isGCObject())
+                    value->value.gc->Mark();
+            }
+        }
 
-		Value GetVal() const
-		{
-			return *value;
-		}
+        virtual ~UpValue() {
+            if (_closed)
+                delete value;
+        }
 
-		void SetVal(Value _v)
-		{
-			*value = _v;
-		}
+        Value GetVal() const {
+            return *value;
+        }
 
-		void close()
-		{
-			if (!_closed) 
-			{
-				value = new Value(*value);
-				_closed = true;
-			}
-		}
+        void SetVal(Value _v) {
+            *value = _v;
+        }
 
-		inline bool closed() const { return _closed; }
+        void close() {
+            if (!_closed) {
+                value = new Value(*value);
+                _closed = true;
+            }
+        }
 
-		virtual Value toValue() override
-		{
-			return Value(this, TypeId::UpValue);
-		}
+        inline bool closed() const { return _closed; }
 
-	private:
+        virtual Value toValue() override {
+            return Value(this, TypeId::UpValue);
+        }
 
-		Value *value;
-		bool _closed;
+    private:
 
-	};
+        Value *value;
+        bool _closed;
+
+    };
 
 }

@@ -2,14 +2,13 @@
 #include "visitor.h"
 #include "codegen.h"
 
-namespace halang
-{
+namespace halang {
 
 #define VIRTUAL_IMPL(AST_NAME) void AST_NAME##Node::Visit(Visitor *visitor) { \
-		visitor->Visit(this); \
-	}
+        visitor->Visit(this); \
+    }
 
-	NODE_LIST(VIRTUAL_IMPL)
+    NODE_LIST(VIRTUAL_IMPL)
 
 #undef VIRTUAL_IMPL
 

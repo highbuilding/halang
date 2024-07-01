@@ -1,4 +1,5 @@
 #pragma once
+
 #include <queue>
 #include <memory>
 #include <vector>
@@ -6,59 +7,67 @@
 #include "util.h"
 #include "StringBuffer.h"
 
-namespace halang
-{
-	using namespace std;
+namespace halang {
+    using namespace std;
 
-	class Lexer: 
-		public StringBuffer, 
-		public utils::MessageContainer
-	{
-	public:
-		typedef shared_ptr<string> pString;
-		// Lexer();
-		// void buffer(U16String _buf);
-		Lexer();
+    class Lexer :
+            public StringBuffer,
+            public utils::MessageContainer {
+    public:
+        typedef shared_ptr <string> pString;
 
-		Token* NextToken();
-		bool Match(Token::TYPE _type);
-		Token* Eat(Token::TYPE _type);
-		Token* PeekToken();
-		// void GoBackToken();
+        // Lexer();
+        // void buffer(U16String _buf);
+        Lexer();
 
-		bool IsFinished() const {
-			return is_finished;
-		}
+        Token *NextToken();
 
-		// Disable
-		Lexer(const Lexer&) = delete;
-		Lexer& operator=(const Lexer&) = delete;
+        bool Match(Token::TYPE _type);
 
-		void StartToken();
+        Token *Eat(Token::TYPE _type);
 
-	protected:
-		Token* current_tok;
+        Token *PeekToken();
+        // void GoBackToken();
 
-	private:
-		bool is_finished;
+        bool IsFinished() const {
+            return is_finished;
+        }
 
-		Token* scanLiteral();
-		Token* scanNumber();
-		Token* scanString();
-		void SwallowComment();
+        // Disable
+        Lexer(const Lexer &) = delete;
 
-		Token* ReadToken();
+        Lexer &operator=(const Lexer &) = delete;
 
-		Token* MakeToken(Token::TYPE _type);
-		Token* MakeToken(
-			Token::TYPE _type,
-			const U16String&
-		);
-		Token* MakeToken(double val);
+        void StartToken();
 
-		Location _start_location;
+    protected:
+        Token *current_tok;
 
-		std::vector<std::unique_ptr<Token>> token_buffer;
-	};
+    private:
+        bool is_finished;
+
+        Token *scanLiteral();
+
+        Token *scanNumber();
+
+        Token *scanString();
+
+        void SwallowComment();
+
+        Token *ReadToken();
+
+        Token *MakeToken(Token::TYPE _type);
+
+        Token *MakeToken(
+                Token::TYPE _type,
+                const U16String &
+        );
+
+        Token *MakeToken(double val);
+
+        Location _start_location;
+
+        std::vector<std::unique_ptr<Token>> token_buffer;
+    };
 
 }

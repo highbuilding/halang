@@ -11,7 +11,7 @@
 
 using namespace halang;
 
-int main(int argc, char * argv[]) {
+int main(int argc, char *argv[]) {
     Parser parser;
 
     while (!std::cin.eof()) {
@@ -30,7 +30,7 @@ int main(int argc, char * argv[]) {
         astVisitor.Visit(root);
     } else {
         for (auto i = parser.getMessages().begin();
-        i != parser.getMessages().end(); i++) {
+             i != parser.getMessages().end(); i++) {
             std::cout << i->msg << std::endl;
         }
 

@@ -1,34 +1,40 @@
 #pragma once
+
 #include "ast.h"
+
 #define E(Name) class Name##Node;
-	NODE_LIST(E)
+
+NODE_LIST(E)
+
 #undef E
 
-namespace halang
-{
+namespace halang {
 
-	class Visitor
-	{
-	public:
+    class Visitor {
+    public:
 
-		virtual void Visit(Node* node) = 0;
+        virtual void Visit(Node *node) = 0;
+
 #define E(Name) virtual void Visit(Name##Node*) = 0;
-		NODE_LIST(E)
+
+        NODE_LIST(E)
+
 #undef E
-		virtual ~Visitor() {}
 
-		inline void IncreDepth() {
-			depth++;
-		}
+        virtual ~Visitor() {}
 
-		inline void DecreDepth() {
-			depth--;
-		}
+        inline void IncreDepth() {
+            depth++;
+        }
 
-	protected:
+        inline void DecreDepth() {
+            depth--;
+        }
 
-		int depth = 0;
+    protected:
 
-	};
+        int depth = 0;
+
+    };
 
 }

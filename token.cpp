@@ -3,12 +3,10 @@
 
 namespace halang {
 
-    Token::Token(): 
-    type(ILLEGAL), maybeInt(false)
-    {}
+    Token::Token() :
+            type(ILLEGAL), maybeInt(false) {}
 
-    Token::Token(Token::TYPE _t, Location _loc)
-    {
+    Token::Token(Token::TYPE _t, Location _loc) {
         type = _t;
         location = _loc;
     }
@@ -21,12 +19,12 @@ namespace halang {
     result = #NAME; \
     break;
 
-    const std::string&
+    const std::string &
     Token::ToString() const {
         std::string result;
 
-        switch(type) {
-			OPERATOR_LIST(EXTEND_OP)
+        switch (type) {
+            OPERATOR_LIST(EXTEND_OP)
             TOKEN_LIST(EXTEND_TOKEN)
 
             case TYPE::TOKEN_NUMBER:

@@ -1,4 +1,5 @@
 #define CATCH_CONFIG_MAIN
+
 #include <iostream>
 #include <utility>
 #include <memory>
@@ -11,20 +12,20 @@
 
 using namespace halang;
 
-TEST_CASE( "Lexer", "[Lexer]" ) {
+TEST_CASE("Lexer", "[Lexer]") {
 
     Parser parser;
 
-    const char* codes[3] = {
-        "def main(a, b)\n",
-        "   let c = a + b * 1\n",
-        "   foo();\n"
-        "end"
+    const char *codes[3] = {
+            "def main(a, b)\n",
+            "   let c = a + b * 1\n",
+            "   foo();\n"
+            "end"
     };
 
     for (int i = 0; i < 3; i++) {
         parser.AddBuffer(
-            std::make_shared<std::string>(codes[i])
+                std::make_shared<std::string>(codes[i])
         );
     }
 
@@ -38,11 +39,10 @@ TEST_CASE( "Lexer", "[Lexer]" ) {
     } else {
         std::cout << "not ok" << std::endl;
         for (auto i = parser.getMessages().begin();
-        i != parser.getMessages().end(); i++) {
+             i != parser.getMessages().end(); i++) {
             std::cout << i->msg << std::endl;
         }
     }
 
-    
 
 }

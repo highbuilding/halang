@@ -1,4 +1,5 @@
 #pragma once
+
 #include "halang.h"
 #include "token.h"
 #include "util.h"
@@ -13,13 +14,18 @@ namespace halang {
     public:
 
         StringBuffer();
-        void AddBuffer(const std::shared_ptr<U16String>& buf);
-        void AddBuffer(const std::shared_ptr<std::string>& buf);
 
-		static bool IsDigit(char16_t t);
-		static bool IsAlphabet(char16_t t);
-		static bool IsWhite(char16_t t);
-		static bool IsLineBreak(char16_t t);
+        void AddBuffer(const std::shared_ptr<U16String> &buf);
+
+        void AddBuffer(const std::shared_ptr<std::string> &buf);
+
+        static bool IsDigit(char16_t t);
+
+        static bool IsAlphabet(char16_t t);
+
+        static bool IsWhite(char16_t t);
+
+        static bool IsLineBreak(char16_t t);
 
         inline Location GetLocation() {
             return loc;
@@ -64,8 +70,9 @@ namespace halang {
 
         std::deque<std::shared_ptr<U16String>> buffer_list;
         std::vector<
-            std::pair<char16_t, Location>
+                std::pair<char16_t, Location>
         > back_buffer;
+
         void check_back_buffer();
     };
 

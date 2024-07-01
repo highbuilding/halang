@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 #include <map>
 #include <functional>
@@ -9,208 +10,197 @@
 #include "upvalue.h"
 #include "svm_codes.h"
 
-namespace halang
-{
+namespace halang {
 
-	class ConstantTable : public GCObject
-	{
-	private:
+    class ConstantTable : public GCObject {
+    private:
 
 
-	};
+    };
 
-	/// <summary>
-	/// A codepack is a package of codes
-	///
-	/// Including :
-	///		instruction bytes
-	///		variables names to the id
-	///
-	/// CodePack store the envrionment.
-	///
-	/// </summary>
-	class CodePack : public GCObject
-	{
-	public:
+    /// <summary>
+    /// A codepack is a package of codes
+    ///
+    /// Including :
+    ///		instruction bytes
+    ///		variables names to the id
+    ///
+    /// CodePack store the envrionment.
+    ///
+    /// </summary>
+    class CodePack : public GCObject {
+    public:
 
-		friend class GC;
-		friend class CodeGen;
-		friend class StackVM;
-		friend class Function;
-		friend class ScriptContext;
+        friend class GC;
 
-		typedef unsigned int size_type;
+        friend class CodeGen;
 
-	protected:
+        friend class StackVM;
 
-		CodePack() :
-			prev(nullptr), param_size(0),
-			_var_names(nullptr), _upval_names(nullptr),
-			_var_names_size(0), _upval_names_size(0),
-			_require_upvalues(nullptr), _require_upvalues_size(0)
-		{}
+        friend class Function;
 
-	private:
+        friend class ScriptContext;
 
-		CodePack* prev;
-		String* name;
-		std::size_t param_size;
+        typedef unsigned int size_type;
 
-		Value* _constants;
-		size_type _const_size;
+    protected:
 
-		Instruction* _instructions;
-		size_type _instructions_size;
+        CodePack() :
+                prev(nullptr), param_size(0),
+                _var_names(nullptr), _upval_names(nullptr),
+                _var_names_size(0), _upval_names_size(0),
+                _require_upvalues(nullptr), _require_upvalues_size(0) {}
 
-		int* _require_upvalues;
-		size_type _require_upvalues_size;
+    private:
 
-		// GC Object
+        CodePack *prev;
+        String *name;
+        std::size_t param_size;
 
-		String** _var_names;
-		size_type _var_names_size;
+        Value *_constants;
+        size_type _const_size;
 
-		String** _upval_names;
-		size_type _upval_names_size;
+        Instruction *_instructions;
+        size_type _instructions_size;
 
-	public:
+        int *_require_upvalues;
+        size_type _require_upvalues_size;
 
-		inline void GenerateVarNamesArray(size_type _size)
-		{
-			_var_names_size = _size;
-			_var_names = _size > 0 ? new String*[_size] : nullptr;
-		}
+        // GC Object
 
-		inline void SetVarName(size_type index, String* name)
-		{
-			if (index >= _var_names_size)
-				throw std::runtime_error("index out of range");
-			_var_names[index] = name;
-		}
+        String **_var_names;
+        size_type _var_names_size;
 
-		inline void GenerateUpValNamesArray(size_type _size)
-		{
-			_upval_names_size = _size;
-			_upval_names = _size > 0 ? new String*[_size] : nullptr;
-		}
+        String **_upval_names;
+        size_type _upval_names_size;
 
-		inline void SetUpValName(size_type index, String* name)
-		{
-			if (index >= _upval_names_size)
-				throw std::runtime_error("index out of range");
-			_upval_names[index] = name;
-		}
+    public:
 
-		virtual void Mark() override;
+        inline void GenerateVarNamesArray(size_type _size) {
+            _var_names_size = _size;
+            _var_names = _size > 0 ? new String *[_size] : nullptr;
+        }
 
-		virtual Dict* GetPrototype() override
-		{
-			return nullptr;
-		}
+        inline void SetVarName(size_type index, String *name) {
+            if (index >= _var_names_size)
+                throw std::runtime_error("index out of range");
+            _var_names[index] = name;
+        }
 
-		virtual Value toValue() override
-		{
-			return Value(this, TypeId::CodePack);
-		}
+        inline void GenerateUpValNamesArray(size_type _size) {
+            _upval_names_size = _size;
+            _upval_names = _size > 0 ? new String *[_size] : nullptr;
+        }
 
-		virtual ~CodePack()
-		{
-			if (_var_names != nullptr)
-				delete[] _var_names;
-			if (_upval_names != nullptr)
-				delete[] _upval_names;
-			delete[] _constants;
-			delete[] _instructions;
-			delete[] _require_upvalues;
-		}
+        inline void SetUpValName(size_type index, String *name) {
+            if (index >= _upval_names_size)
+                throw std::runtime_error("index out of range");
+            _upval_names[index] = name;
+        }
 
-	};
+        virtual void Mark() override;
 
-	class FunctionArgs : public Array
-	{
-	public:
+        virtual Dict *GetPrototype() override {
+            return nullptr;
+        }
 
-		friend class GC;
-		friend class StackVM;
+        virtual Value toValue() override {
+            return Value(this, TypeId::CodePack);
+        }
 
-	protected:
+        virtual ~CodePack() {
+            if (_var_names != nullptr)
+                delete[] _var_names;
+            if (_upval_names != nullptr)
+                delete[] _upval_names;
+            delete[] _constants;
+            delete[] _instructions;
+            delete[] _require_upvalues;
+        }
 
-		FunctionArgs()
-		{
-		}
+    };
 
-		FunctionArgs(unsigned int i):
-			Array(i)
-		{
-		}
+    class FunctionArgs : public Array {
+    public:
 
-	public:
+        friend class GC;
 
-		virtual void Mark() override;
+        friend class StackVM;
 
-	};
+    protected:
 
-	typedef std::function<Value (Value, FunctionArgs& )> ExternFunction;
+        FunctionArgs() {
+        }
 
-	class Function : public GCObject
-	{
-	public:
+        FunctionArgs(unsigned int i) :
+                Array(i) {
+        }
 
-		friend class GC;
-		friend class StackVM;
-		friend class CodeGen;
-		friend class ScriptContext;
+    public:
 
-		typedef unsigned int size_type;
+        virtual void Mark() override;
 
-		static std::string ToString(Function *);
+    };
 
-	protected:
+    typedef std::function<Value(Value, FunctionArgs &)> ExternFunction;
 
-		Function(ExternFunction fun) :
-			externFunction(fun), isExtern(true)
-		{}
+    class Function : public GCObject {
+    public:
 
-		Function(CodePack* cp) :
-			codepack(cp), isExtern(false)
-		{}
+        friend class GC;
 
-		void Close()
-		{
-			for (auto i = upvalues.begin(); i != upvalues.end(); ++i)
-				(*i)->close();
-		}
+        friend class StackVM;
 
-	private:
+        friend class CodeGen;
 
-		bool isExtern;
+        friend class ScriptContext;
 
-		union 
-		{
-			CodePack* codepack;
-			ExternFunction externFunction;
-		};
+        typedef unsigned int size_type;
 
-		String * name;
-		Value thisOne;
+        static std::string ToString(Function *);
 
-		std::vector<UpValue*> upvalues;
+    protected:
 
-		inline void SetThisObject(Value _obj) { thisOne = _obj; }
-		virtual Dict* GetPrototype() override { return nullptr; }
+        Function(ExternFunction fun) :
+                externFunction(fun), isExtern(true) {}
 
-	public:
+        Function(CodePack *cp) :
+                codepack(cp), isExtern(false) {}
 
-		virtual void Mark() override;
+        void Close() {
+            for (auto i = upvalues.begin(); i != upvalues.end(); ++i)
+                (*i)->close();
+        }
 
-		virtual Value toValue() override { return Value(this, TypeId::Function); }
+    private:
 
-		inline Value GetThis() const { return thisOne; }
+        bool isExtern;
 
-		virtual ~Function()
-		{
-		}
+        union {
+            CodePack *codepack;
+            ExternFunction externFunction;
+        };
 
-	};
+        String *name;
+        Value thisOne;
+
+        std::vector<UpValue *> upvalues;
+
+        inline void SetThisObject(Value _obj) { thisOne = _obj; }
+
+        virtual Dict *GetPrototype() override { return nullptr; }
+
+    public:
+
+        virtual void Mark() override;
+
+        virtual Value toValue() override { return Value(this, TypeId::Function); }
+
+        inline Value GetThis() const { return thisOne; }
+
+        virtual ~Function() {
+        }
+
+    };
 
 };

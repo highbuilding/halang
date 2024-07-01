@@ -3,22 +3,22 @@
 
 namespace halang {
 
-	void ASTVisitor::Visit(Node* _node) {
+    void ASTVisitor::Visit(Node *_node) {
         if (_node == nullptr) {
             Out() << "null" << std::endl;
         } else {
             _node->Visit(this);
         }
     }
-    
+
     void ASTVisitor::Visit(ProgramNode *node) {
         Out() << "Program" << std::endl;
 
         depth++;
         for (auto i = node->statements.begin();
-            i != node->statements.end(); i++) {
-                Visit(*i);
-            }
+             i != node->statements.end(); i++) {
+            Visit(*i);
+        }
 
         depth--;
     }
@@ -33,12 +33,12 @@ namespace halang {
 
     void ASTVisitor::Visit(IdentifierNode *node) {
         Out() << "Identifier: " <<
-            utils::utf16_to_utf8(node->name) << std::endl;
+              utils::utf16_to_utf8(node->name) << std::endl;
     }
 
     void ASTVisitor::Visit(StringNode *node) {
         Out() << "String: " <<
-            utils::utf16_to_utf8(node->content) << std::endl;
+              utils::utf16_to_utf8(node->content) << std::endl;
     }
 
     void ASTVisitor::Visit(LetStatementNode *node) {
@@ -46,7 +46,7 @@ namespace halang {
         depth++;
 
         for (auto i = node->assignments.begin();
-        i != node->assignments.end(); i++) {
+             i != node->assignments.end(); i++) {
             Visit(*i);
         }
 
@@ -79,7 +79,7 @@ namespace halang {
 
         depth++;
         for (auto i = node->children.begin();
-        i != node->children.end(); i++) {
+             i != node->children.end(); i++) {
             Visit(*i);
         }
         depth--;
@@ -88,7 +88,7 @@ namespace halang {
 
         depth++;
         for (auto i = node->else_children.begin();
-        i != node->else_children.end(); i++) {
+             i != node->else_children.end(); i++) {
             Visit(*i);
         }
         depth--;
@@ -108,7 +108,7 @@ namespace halang {
         Out() << "children:" << std::endl;
         depth++;
         for (auto i = node->children.begin();
-        i != node->children.end(); i++) {
+             i != node->children.end(); i++) {
             Visit(*i);
         }
         depth--;
@@ -150,7 +150,7 @@ namespace halang {
         Out() << "params:" << std::endl;
         depth++;
         for (auto i = node->params.begin();
-        i != node->params.end(); i++) {
+             i != node->params.end(); i++) {
             Visit(*i);
         }
         depth--;
@@ -158,7 +158,7 @@ namespace halang {
         Out() << "body:" << std::endl;
         depth++;
         for (auto i = node->body.begin();
-        i != node->body.end(); i++) {
+             i != node->body.end(); i++) {
             Visit(*i);
         }
         depth--;
@@ -195,7 +195,7 @@ namespace halang {
         Out() << "params:" << std::endl;
         depth++;
         for (auto i = node->params.begin();
-        i != node->params.end(); i++) {
+             i != node->params.end(); i++) {
             Visit(*i);
         }
         depth--;
@@ -227,7 +227,7 @@ namespace halang {
         depth++;
 
         for (auto i = node->children.begin();
-        i != node->children.end(); i++) {
+             i != node->children.end(); i++) {
             Visit(*i);
         }
 
@@ -238,8 +238,8 @@ namespace halang {
         Out() << "UnaryExpression:" << std::endl;
         depth++;
 
-        Out() << "operator: " 
-            << PrintOP(node->op) << std::endl;
+        Out() << "operator: "
+              << PrintOP(node->op) << std::endl;
 
         depth++;
         Visit(node->child);
@@ -252,8 +252,8 @@ namespace halang {
         Out() << "BinaryExpression:" << std::endl;
         depth++;
 
-        Out() << "operator: " << PrintOP(node->op) 
-            << std::endl;
+        Out() << "operator: " << PrintOP(node->op)
+              << std::endl;
 
         Out() << "left:" << std::endl;
         depth++;
@@ -273,7 +273,7 @@ namespace halang {
         depth++;
 
         for (auto i = node->children.begin();
-        i != node->children.end(); i++) {
+             i != node->children.end(); i++) {
             Visit(*i);
         }
 
@@ -287,7 +287,7 @@ namespace halang {
         Out() << "params:" << std::endl;
         depth++;
         for (auto i = node->params.begin();
-        i != node->params.end(); i++) {
+             i != node->params.end(); i++) {
             Visit(*i);
         }
         depth--;

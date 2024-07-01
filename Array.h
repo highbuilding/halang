@@ -1,90 +1,78 @@
 #pragma once
+
 #include "halang.h"
 #include "object.h"
 #include <vector>
 
-namespace halang
-{
+namespace halang {
 
-	class Array : 
-		public GCObject, private std::vector<Value>
-	{
+    class Array :
+            public GCObject, private std::vector<Value> {
 
-	public:
+    public:
 
-		friend class GC;
-		friend class StackVM;
+        friend class GC;
 
-		typedef std::vector<Value>::size_type size_type;
+        friend class StackVM;
 
-	protected:
+        typedef std::vector<Value>::size_type size_type;
 
-		Array()
-		{
+    protected:
 
-		}
+        Array() {
 
-		Array(unsigned int i):
-			std::vector<Value>(i)
-		{
-		}
+        }
 
-	public:
+        Array(unsigned int i) :
+                std::vector<Value>(i) {
+        }
 
-		virtual Value toValue() override
-		{
-			return Value(this, TypeId::Array);
-		}
+    public:
 
-		void Push(Value v)
-		{
-			std::vector<Value>::push_back(v);
-		}
+        virtual Value toValue() override {
+            return Value(this, TypeId::Array);
+        }
 
-		Value Pop()
-		{
-			return std::vector<Value>::operator[](std::vector<Value>::size() - 1);
-		}
+        void Push(Value v) {
+            std::vector<Value>::push_back(v);
+        }
 
-		inline size_type GetLength() const
-		{
-			return std::vector<Value>::size();
-		}
+        Value Pop() {
+            return std::vector<Value>::operator[](std::vector<Value>::size() - 1);
+        }
 
-		inline Value At(unsigned int index) const
-		{
-			if (index >= GetLength())
-				throw std::runtime_error("<Array>index out of range");
-			return std::vector<Value>::at(index);
-		}
+        inline size_type GetLength() const {
+            return std::vector<Value>::size();
+        }
 
-		inline void Set(unsigned int index, Value _v)
-		{
-			if (index >= GetLength())
-				throw std::runtime_error("<Array>index out of range");
-			std::vector<Value>::operator[](index) = _v;
-		}
+        inline Value At(unsigned int index) const {
+            if (index >= GetLength())
+                throw std::runtime_error("<Array>index out of range");
+            return std::vector<Value>::at(index);
+        }
 
-		inline void Resize(unsigned int _size)
-		{
-			std::vector<Value>::resize(_size);
-		}
+        inline void Set(unsigned int index, Value _v) {
+            if (index >= GetLength())
+                throw std::runtime_error("<Array>index out of range");
+            std::vector<Value>::operator[](index) = _v;
+        }
 
-		virtual void Mark() override
-		{
-			marked = true;
-			for (auto i = begin(); i != end(); ++i)
-				if (i->isGCObject())
-				{
-					i->value.gc->Mark();
-				}
-		}
+        inline void Resize(unsigned int _size) {
+            std::vector<Value>::resize(_size);
+        }
 
-		Value& operator[](unsigned int i)
-		{
-			return std::vector<Value>::operator[](i);
-		}
+        virtual void Mark() override {
+            marked = true;
+            for (auto i = begin(); i != end(); ++i)
+                if (i->isGCObject()) {
+                    i->value.gc->Mark();
+                }
+        }
 
-	};
+        Value &operator[](unsigned int i) {
+            return std::vector<Value>::operator[](i);
+        }
+
+    };
 
 }
