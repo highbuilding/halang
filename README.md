@@ -9,7 +9,9 @@ A toy dynamic language implementation.
 - ✔ Function and Closure
 - ◦ Class
 - ◦ Yield
-- ◦ ...
+- ◦ Opt GC
+- ◦ RegisterVM
+- ◦ More Grammer Support
 
 
 
